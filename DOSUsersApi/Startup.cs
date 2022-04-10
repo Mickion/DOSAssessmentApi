@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using DOSUsersApi.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace DOSUsersApi
 {
@@ -29,19 +30,13 @@ namespace DOSUsersApi
                            AllowAnyMethod().
                            AllowAnyHeader();
                        }));
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("CorsPolicy",
-            //        builder => builder.WithOrigins("https://localhost:44376/", "https://localhost:44361")
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader());
-            //        //.AllowCredentials());
-            //});
 
             services.AddDbContext<UserDbContext>(options => options.UseSqlServer
                         (Configuration.GetConnectionString("DOSApiConnectionString")));
 
             services.AddControllers();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IUserRepository, SqlUserRepository>();
 

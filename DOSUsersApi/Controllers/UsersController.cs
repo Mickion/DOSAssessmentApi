@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DOSUsersApi.Data;
 using DOSUsersApi.Models;
+using AutoMapper;
+using DOSUsersApi.DTOs;
 
 namespace DOSUsersApi.Controllers
 {
@@ -13,26 +15,37 @@ namespace DOSUsersApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         //GET api/users
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetAllUsers()
+        public ActionResult<IEnumerable<UserDto>> GetAllUsers()
         {
             var users = _userRepository.GetAllUsers();
-            return Ok(users);
+            if (users == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
         }
 
         //GET api/users/{id}
         [HttpGet("{id}")]
-        public ActionResult <User> GetUserById(int id)  
+        public ActionResult <UserDto> GetUserById(int id)  
         {
             var user = _userRepository.GetUserById(id);
-            return Ok(user);
+            if(user == null)
+            {
+                return NotFound();                
+            }
+            return Ok(_mapper.Map<UserDto>(user));
+
         }
     }
 }
